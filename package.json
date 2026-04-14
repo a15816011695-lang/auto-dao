@@ -1,0 +1,10 @@
+{
+  "name": "auto-dao",
+  "version": "1.0.0",
+  "description": "AI 私人导师 — 能规划、能诊断、能动态调整的交互式学习引擎",
+  "private": true,
+  "scripts": {
+    "convert": "python .claude/skills/everything-to-markdown/scripts/convert_to_markdown.py"
+  },
+  "license": "MIT"
+}

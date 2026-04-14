@@ -1,0 +1,191 @@
+{
+  "main": {
+    "id": "4f6a60076799e103",
+    "type": "split",
+    "children": [
+      {
+        "id": "bef40205cf358a85",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8e7ccc0444dfa0b2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "learning-history/003_stm32f103-hal_2026-04-13-09-45/lessons/lesson_3.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "lesson_3"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "b4a62e08ba463912",
+    "type": "split",
+    "children": [
+      {
+        "id": "d841c88074026402",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7945bbf42de7463f",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "f487cc65f8bb8c3f",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "acae25b39b3b2a3e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a8ff73fd2e229eca",
+    "type": "split",
+    "children": [
+      {
+        "id": "d9711e9aeff23e5c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "642c949349b78228",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "learning-history/003_stm32f103-hal_2026-04-13-09-45/lessons/lesson_3.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "lesson_3 的反向链接列表"
+            }
+          },
+          {
+            "id": "d98b8406b1203b67",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "learning-history/003_stm32f103-hal_2026-04-13-09-45/lessons/lesson_3.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "lesson_3 的出链列表"
+            }
+          },
+          {
+            "id": "2ecbeda6f27cd46a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "d4a38577d239ecbb",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "2193d773b6e6ca12",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "learning-history/003_stm32f103-hal_2026-04-13-09-45/lessons/lesson_3.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "lesson_3 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "8e7ccc0444dfa0b2",
+  "lastOpenFiles": [
+    "learning-history/003_stm32f103-hal_2026-04-13-09-45/lessons/lesson_2.md",
+    "learning-history/003_stm32f103-hal_2026-04-13-09-45/summary.md"
+  ]
+}
