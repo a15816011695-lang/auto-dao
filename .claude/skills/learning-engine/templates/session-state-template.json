@@ -1,12 +1,19 @@
-{
+﻿{
+  "schema_version": "2.0",
   "topic_id": "",
   "source_path": "",
   "processed_path": "",
-  "created_at": "",
-  "last_active": "",
+  "source_hash": "",
+  "phase": "init",
   "current_lesson": 0,
-  "current_status": "new",
-  "last_completed_lesson": 0,
   "total_lessons": 0,
-  "counterfactual_mode": null
+  "last_completed_lesson": 0,
+  "mastery_passed": 0,
+  "mastery_failed": 0,
+  "mastery_rate": 0.0,
+  "counterfactual_mode": null,
+  "learning_language": "",
+  "wait_reason": null,
+  "created_at": "",
+  "updated_at": ""
 }

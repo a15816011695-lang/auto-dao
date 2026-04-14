@@ -141,6 +141,13 @@ auto-dao/
 
 ---
 
+## 🔒 安全与隐私
+
+- [安全策略 (SECURITY.md)](SECURITY.md) — 漏洞报告方式
+- [隐私说明 (PRIVACY.md)](PRIVACY.md) — 哪些数据会发送到外部服务
+
+---
+
 ## 🤝 贡献指南
 
 欢迎贡献！
