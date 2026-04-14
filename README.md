@@ -94,6 +94,7 @@ AI 会自动：
 | **learning-engine** | 主学习引擎 | 规划路线、生成讲义、批改习题 |
 | **everything-to-markdown** | 文档格式转换 | PDF/Word/PPT → Markdown |
 | **glossary-collector** | 术语表提取 | 提取专业词汇生成对照表 |
+| **markdown-refiner** | Markdown 质量优化 | 修标题层级、清 OCR 噪声、修表格公式 |
 
 ---
 

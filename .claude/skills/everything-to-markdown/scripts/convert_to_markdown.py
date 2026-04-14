@@ -5,6 +5,7 @@ Everything to Markdown Converter
 使用 MinerU API 将各种文档格式转换为 Markdown
 """
 
+import logging
 import os
 import sys
 import time
@@ -12,13 +13,47 @@ import requests
 from pathlib import Path
 from urllib.parse import urlparse
 from dotenv import load_dotenv
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # API 配置
 API_BASE_URL = "https://mineru.net/api/v4"
 SUPPORTED_EXTENSIONS = {
-    'pdf', 'png', 'jpg', 'jpeg', 'jp2', 'webp', 'gif', 'bmp', 
+    'pdf', 'png', 'jpg', 'jpeg', 'jp2', 'webp', 'gif', 'bmp',
     'doc', 'docx', 'ppt', 'pptx', 'html'
 }
+
+# 工程护栏
+CONNECT_TIMEOUT = 30   # 连接超时（秒）
+READ_TIMEOUT = 300     # 读取超时（秒）
+MAX_FILE_SIZE_MB = 200 # MinerU 上限
+MAX_RETRIES = 3        # 请求重试次数
+
+logger = logging.getLogger("convert_to_markdown")
+
+
+def _build_session() -> requests.Session:
+    """构建带指数退避重试的 requests Session"""
+    session = requests.Session()
+    retry = Retry(
+        total=MAX_RETRIES,
+        backoff_factor=1,          # 1s, 2s, 4s
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET", "POST", "PUT"],
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
+def _check_file_size(file_path: str) -> None:
+    """预检查文件大小，超过 MinerU 限制则提前报错"""
+    size_mb = os.path.getsize(file_path) / (1024 * 1024)
+    if size_mb > MAX_FILE_SIZE_MB:
+        raise ValueError(
+            f"文件大小 {size_mb:.1f} MB 超过 MinerU 上限 {MAX_FILE_SIZE_MB} MB"
+        )
 
 
 def get_api_key(project_root: str = None) -> str:
@@ -114,10 +149,12 @@ def create_task_from_url(api_key: str, url: str) -> str:
     else:
         data["model_version"] = "vlm"
     
-    response = requests.post(
+    session = _build_session()
+    response = session.post(
         f"{API_BASE_URL}/extract/task",
         headers=headers,
-        json=data
+        json=data,
+        timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),
     )
     
     if response.status_code != 200:
@@ -159,11 +196,14 @@ def create_task_from_file(api_key: str, file_path: str) -> tuple:
     else:
         data["model_version"] = "vlm"
     
+    session = _build_session()
+
     # 1. 获取上传 URL
-    response = requests.post(
+    response = session.post(
         f"{API_BASE_URL}/file-urls/batch",
         headers=headers,
-        json=data
+        json=data,
+        timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),
     )
     
     if response.status_code != 200:
@@ -176,16 +216,19 @@ def create_task_from_file(api_key: str, file_path: str) -> tuple:
     batch_id = result["data"]["batch_id"]
     upload_url = result["data"]["file_urls"][0]
     
-    print(f"上传 URL 已获取，batch_id: {batch_id}")
+    logger.info("上传 URL 已获取，batch_id: %s", batch_id)
     
     # 2. 上传文件
     with open(file_path, 'rb') as f:
-        upload_response = requests.put(upload_url, data=f)
+        upload_response = session.put(
+            upload_url, data=f,
+            timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),
+        )
     
     if upload_response.status_code != 200:
         raise Exception(f"文件上传失败: HTTP {upload_response.status_code}")
     
-    print(f"文件上传成功: {file_name}")
+    logger.info("文件上传成功: %s", file_name)
     
     return batch_id
 
@@ -225,8 +268,9 @@ def poll_task_result(api_key: str, task_id: str = None, batch_id: str = None,
     
     start_time = time.time()
     
+    session = _build_session()
     while time.time() - start_time < timeout:
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
         
         if response.status_code != 200:
             raise Exception(f"查询任务失败: HTTP {response.status_code}")
@@ -297,9 +341,10 @@ def download_markdown(zip_url: str, output_dir: str, base_name: str = None) -> s
     # 确保输出目录存在
     os.makedirs(output_dir, exist_ok=True)
     
-    print(f"正在下载结果...")
+    logger.info("正在下载结果...")
     
-    response = requests.get(zip_url)
+    session = _build_session()
+    response = session.get(zip_url, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
     if response.status_code != 200:
         raise Exception(f"下载失败: HTTP {response.status_code}")
     
@@ -323,8 +368,8 @@ def download_markdown(zip_url: str, output_dir: str, base_name: str = None) -> s
     if not os.path.exists(md_path):
         raise Exception("解压后未找到 full.md 文件")
     
-    print(f"Markdown 已保存: {md_path}")
-    print(f"完整结果已解压到: {extract_dir}")
+    logger.info("Markdown 已保存: %s", md_path)
+    logger.info("完整结果已解压到: %s", extract_dir)
     
     return md_path
 
@@ -342,9 +387,11 @@ def convert_to_markdown(input_path: str, output_dir: str = None,
     Returns:
         保存的 Markdown 文件路径
     """
+    t_start = time.time()
+
     # 获取 API Key
     api_key = get_api_key(project_root)
-    print(f"API Key 已加载")
+    logger.info("API Key 已加载")
     
     # 设置输出目录
     if output_dir is None:
@@ -359,7 +406,7 @@ def convert_to_markdown(input_path: str, output_dir: str = None,
     else:
         base_name = Path(input_path).stem
     
-    print(f"正在处理: {input_path}")
+    logger.info("正在处理: %s", input_path)
     
     # 创建任务
     if is_url(input_path):
@@ -373,22 +420,32 @@ def convert_to_markdown(input_path: str, output_dir: str = None,
         if not os.path.exists(input_path):
             raise FileNotFoundError(f"文件不存在: {input_path}")
         
+        _check_file_size(input_path)
+        
         ext = get_file_extension(input_path)
         if ext not in SUPPORTED_EXTENSIONS:
             raise ValueError(f"不支持的文件类型: {ext}\n支持的类型: {', '.join(SUPPORTED_EXTENSIONS)}")
         
-        print("检测到本地文件，使用文件上传模式...")
+        logger.info("检测到本地文件 (%.1f MB)，使用文件上传模式...", os.path.getsize(input_path) / (1024 * 1024))
         batch_id = create_task_from_file(api_key, input_path)
         
         # 轮询结果
         result = poll_task_result(api_key, batch_id=batch_id)
     
     # 下载 Markdown
-    return download_markdown(result["full_zip_url"], output_dir, base_name)
+    md_path = download_markdown(result["full_zip_url"], output_dir, base_name)
+    elapsed = time.time() - t_start
+    logger.info("转换完成: %s (耗时 %.1f 秒)", md_path, elapsed)
+    return md_path
 
 
 def main():
     """命令行入口"""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
     if len(sys.argv) < 2:
         print("用法: python convert_to_markdown.py <file_path_or_url> [output_dir]")
         print("\n支持的文件类型:")

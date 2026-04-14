@@ -52,6 +52,17 @@ tmp/
     └── ...              # 其他中间文件
 ```
 
+## 转换后质量检查
+
+转换完成后，**必须**对输出的 `full.md` 执行 `markdown-refiner` 进行质量检查：
+
+1. 检查标题层级是否连续（无跳级）
+2. 检查是否存在 OCR 噪声字符
+3. 检查表格和公式格式是否正确
+4. 若质量评分低于阈值，自动执行精炼修复
+
+> 此步骤为阻塞门控：精炼完成前不得将 Markdown 文件交给 learning-engine 处理。
+
 ## API 文档
 
 详细的 MinerU API 文档请参考 [references/mineru-api.md](references/mineru-api.md)，包含：

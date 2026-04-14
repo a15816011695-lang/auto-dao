@@ -1,0 +1,11 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^https://mineru.net"
+    },
+    {
+      "pattern": "^https://github.com/a15816011695-lang/auto-dao/security"
+    }
+  ],
+  "aliveStatusCodes": [200, 206, 301, 302, 403]
+}

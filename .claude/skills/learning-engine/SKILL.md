@@ -361,8 +361,9 @@ This skill operates as a single inline agent — no role switching required.
 
 **4.1 逆向设计（生成新 Lesson 时执行）**：
 1. 读取 `${SKILL_DIR}/references/bloom-taxonomy.md` 和 `${SKILL_DIR}/references/socratic-method.md`
-2. 读取用户背景：
-   - 读取 `${PROJECT_DIR}/settings/background.md` 获取基础背景
+2. 读取用户背景与教学偏好：
+   - 读取 `${PROJECT_DIR}/settings/background.md` 获取基础背景和"教学偏好"区域
+   - 偏好字段（教学语言、课时长度、题目数量、挑战题、反事实论证、学习模式）按以下优先级确定最终值：用户口头补充 > `background.md` 配置 > `session_state.json` 会话级覆盖 > 系统默认值
    - 若本次调用时用户补充了背景信息，与文件内容合并；冲突处以用户补充为准
 3. 明确本节课目标："本节课结束后，用户应能解决什么具体问题？"
 4. 从资料中提取知识点，结合历史记录和用户背景规划路径，确定目标布卢姆层级

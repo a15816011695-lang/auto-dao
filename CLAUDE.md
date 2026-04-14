@@ -6,9 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **auto-dao** is an interactive learning engine that uses AI to guide users through deep knowledge internalization. It combines the Socratic method and Bloom's taxonomy to create personalized, file-driven learning experiences.
 
-The project is built around three core skills:
+The project is built around four core skills:
 - **learning-engine**: Main interactive learning orchestrator
 - **everything-to-markdown**: Document format conversion (PDF, DOCX, PPTX, images → Markdown)
+- **markdown-refiner**: Markdown quality optimization (heading hierarchy, OCR noise, table/formula fixes)
 - **glossary-collector**: Terminology extraction for cross-language learning
 
 ## Architecture
@@ -94,8 +95,9 @@ Edit `settings/background.md` to provide user context:
 - Grade level (e.g., university, K12)
 - Subjects being studied
 - Current problems or learning goals
+- Teaching preferences (optional): language, lesson length, exercise count, challenge questions, counterfactual mode, learning mode
 
-This context is used to personalize lesson depth, vocabulary, and exercise difficulty.
+Priority: user verbal override > `background.md` > `session_state.json` session override > system default.
 
 ## Key Implementation Details
 
