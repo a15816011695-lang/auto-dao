@@ -64,6 +64,22 @@
 | {date_2} | Lesson {n+1} | 完成 | {note_2} |
 | {date_3} | Lesson {n+2} | 进行中 | {note_3} |
 
+<!-- 补救课与偏题分支示例（按需出现）：
+| {date_x} | 🔧 补救课 L{n}_remedial | 完成 | 触发原因：连续 2 课 mastery < 60%，回顾 {知识点} |
+| {date_y} | 🔀 分支课 L{n}_branch | 完成 | 用户偏题探索 {topic}，已回归主线 |
+-->
+
+---
+
+## 路线调整记录
+
+<!-- 记录何时、为何插入了补救课或偏题分支，用于事后追溯教学决策 -->
+
+| 时间 | 调整类型 | 触发原因 | 影响 |
+|------|---------|---------|------|
+| {datetime} | 🔧 补救课 | {trigger_reason} | 插入 lesson_{n}_remedial.md |
+| {datetime} | 🔀 偏题分支 | {trigger_reason} | 插入 lesson_{n}_branch.md，主线暂停 |
+
 ---
 
 ## 下一步行动

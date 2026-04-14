@@ -1,0 +1,22 @@
+[project]
+name = "auto-dao"
+version = "1.0.0"
+description = "AI 私人导师 — 能规划、能诊断、能动态调整的交互式学习引擎"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "requests>=2.28.0",
+    "python-dotenv>=1.0.0",
+    "jsonschema>=4.0.0",
+    "urllib3>=1.26.0",
+]
+
+[project.scripts]
+convert = "scripts.convert_to_markdown:main"
+validate-state = "scripts.session.validate_state:main"
+check-examples = "scripts.ci.check_examples:main"
+schedule-review = "scripts.session.schedule_review:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"

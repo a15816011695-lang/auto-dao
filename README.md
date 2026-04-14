@@ -28,7 +28,17 @@ git clone https://github.com/a15816011695-lang/auto-dao.git
 cd auto-dao
 ```
 
-### 2. 配置 API Key（可选）
+### 2. 安装 Python 依赖（可选）
+
+仅在使用文件转换或校验脚本时需要：
+
+```bash
+pip install -r requirements.txt
+```
+
+> **注**：本项目为 Python-first。`package.json` 仅作为 `npm run convert` 的便捷入口，不依赖 Node.js 生态。
+
+### 3. 配置 API Key（可选）
 
 编辑 `settings/.env`，填入 MinerU API Key（仅转换 PDF/Word/PPT 时需要）：
 
@@ -38,7 +48,7 @@ MINERU_API_KEY=你的API密钥
 
 👉 获取 Key：https://mineru.net/apiManage/token
 
-### 3. 个性化配置
+### 4. 个性化配置
 
 编辑 `settings/background.md`，填入你的背景信息：
 

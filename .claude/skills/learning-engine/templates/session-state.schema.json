@@ -84,6 +84,10 @@
       "enum": ["awaiting_answer", "awaiting_grading", "awaiting_user_choice", null],
       "description": "Why the session is blocked, null when not blocked"
     },
+    "repo_commit_hash": {
+      "type": ["string", "null"],
+      "description": "Git commit hash of the repository at learning time. Used for incremental learning on revisit. null for non-repo sources."
+    },
     "created_at": {
       "type": "string",
       "format": "date-time",
