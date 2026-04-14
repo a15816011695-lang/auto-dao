@@ -1,5 +1,7 @@
 # 学习路线图状态 (Roadmap Status)
 
+<!-- 本文件为派生视图，进度数据以 session_state.json 为准。 -->
+
 **主题**: {topic_name}
 **时间戳**: {timestamp}
 

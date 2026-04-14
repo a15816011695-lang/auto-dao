@@ -1,0 +1,18 @@
+{
+  "schema_version": "2.0",
+  "topic_id": "golden-example",
+  "source_path": "materials/example-guide.md",
+  "source_hash": "sha256:abc123example",
+  "phase": "completed",
+  "current_lesson": 2,
+  "total_lessons": 2,
+  "last_completed_lesson": 2,
+  "mastery_passed": 6,
+  "mastery_failed": 1,
+  "mastery_rate": 0.857,
+  "counterfactual_mode": "off",
+  "learning_language": "zh",
+  "wait_reason": null,
+  "created_at": "2026-04-10T14:00:00+08:00",
+  "updated_at": "2026-04-10T15:30:00+08:00"
+}

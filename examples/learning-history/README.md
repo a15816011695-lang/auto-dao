@@ -12,6 +12,9 @@
 | `一元函数微分学_2026-04-06-22-00` | 理科教材 | 使用英文教学 |
 | `attention-transformer_2026-04-06-10-52` | 工科论文 | 演示 AI 辅助学习技术论文 |
 | `videocut-skills_2026-04-06` | GitHub 开源项目 | 演示 AI 辅助学习开源项目代码 |
+| `golden-example_2026-04-10-14-00` | 🏆 **黄金样例** | 展示完整学习流程（含 report.md），用于 CI 回归和新用户参照 |
+
+> **说明**：`golden-example` 是唯一 `phase: "completed"` 的样例，包含完整文件集（session_state.json、summary.md、roadmap_status.md、lessons/、report.md）。其他样例均为进行中的学习过程。
 
 ## 学习类型说明
 

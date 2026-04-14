@@ -18,7 +18,16 @@
 | `attention-transformer_2026-04-06-10-52` | 英文短横线命名 | `YYYY-MM-DD-HH-MM` |
 | `videocut-skills_2026-04-06` | 英文短横线命名 | `YYYY-MM-DD` |
 
-**观察到的规律**：
+**规范化规则（v2.0）**：
+
+| 组成 | 规则 | 示例 |
+|------|------|------|
+| `topic_slug` | 全小写 ASCII，单词以连字符分隔；中文主题使用英文翻译或拼音 | `attention-transformer`、`calculus-derivatives` |
+| `timestamp` | 固定 `YYYY-MM-DD-HH-MM` 格式 | `2026-04-06-10-06` |
+
+> **历史兼容说明**：现有示例中存在中文 topic_name（如 `被拒绝的勇气`）和简化时间戳（如 `YYYY-MM-DD`），这些为早期案例，保留不做重命名。新会话必须遵循上述规则。
+
+**早期案例的观察记录**：
 - `topic_name` 从学习资料中自动提炼，可中文可英文
 - `timestamp` 在 SKILL.md 中规定为 `YYYY-MM-DD-HH-MM`，但实际案例中存在简化为 `YYYY-MM-DD` 的情况
 

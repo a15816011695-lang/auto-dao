@@ -1,5 +1,7 @@
 # 学习摘要 (Learning Summary)
 
+<!-- 本文件为派生视图，核心进度以 session_state.json 为准。笔记、错题记录等补充信息可直接在此追加。 -->
+
 **主题**: {topic_name}
 **开始时间**: {start_timestamp}
 **最后更新**: {last_update_timestamp}
