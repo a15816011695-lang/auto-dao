@@ -24,6 +24,8 @@ $RECYCLE.BIN/
 .Trash-*
 
 # Editor and IDE Files
+# Obsidian
+.obsidian/
 # VSCode
 .vscode/
 # .claude/
