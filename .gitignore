@@ -90,6 +90,10 @@ scratch/
 /docs/superpowers/
 .qwen/
 
+tests/test_md_parser.py
+tests/_gen_md_parser_test.py
+fix_md_parser.py
+
 # Test files
 test_output/
 temp_files/
