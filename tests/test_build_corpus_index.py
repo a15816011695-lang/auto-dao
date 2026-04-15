@@ -30,10 +30,8 @@ class TestBuildCorpusIndexIntegration:
 
         # Capture print output
         f = io.StringIO()
-        with contextlib.redirect_stdout(f):
+        with contextlib.redirect_stdout(io.StringIO()):
             corpus = build_shared_corpus([mat_a, mat_b])
-
-        output = f.getvalue()
         assert "groups" in corpus
         assert isinstance(corpus["groups"], list)
 
@@ -78,4 +76,4 @@ class TestBuildCorpusIndexIntegration:
 # ---------------------------------------------------------------------------
 # Helper: pytest import
 # ---------------------------------------------------------------------------
-import pytest  # noqa: E402
+import pytest  # noqa: F401, E402

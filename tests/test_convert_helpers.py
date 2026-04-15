@@ -7,7 +7,7 @@ from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).parent.parent / ".claude" / "skills" / "everything-to-markdown" / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
-import convert_to_markdown
+import convert_to_markdown  # noqa: E402
 
 
 class TestIsUrl:
