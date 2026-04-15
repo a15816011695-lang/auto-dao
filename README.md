@@ -33,7 +33,7 @@ cd auto-dao
 仅在使用文件转换或校验脚本时需要：
 
 ```bash
-pip install -r requirements.txt
+pip install -e .
 ```
 
 > **注**：本项目为 Python-first。`package.json` 仅作为 `npm run convert` 的便捷入口，不依赖 Node.js 生态。
