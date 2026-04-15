@@ -138,6 +138,20 @@ This skill operates as a single inline agent — no role switching required.
 
 ---
 
+## Common Commands
+
+### 大测驗
+
+```bash
+# 全面知识图谱评估（一次性摸底某专题的完整知识水平）
+/大测验
+
+# 或在学习引擎运行时说"做个摸底测试"
+# 系统会建议是否需要大测驗
+```
+
+---
+
 ## Workflow
 
 ### Step 1: 文件格式预处理 (File Format Preprocessing)
@@ -436,6 +450,23 @@ This skill operates as a single inline agent — no role switching required.
    - 假设该结论错误，可能的原因是什么？
    - 有哪些边缘案例不符合该理论？
    - 去掉前提条件后，结论是否依然成立？
+
+**4.0 读取诊断结果（每次生成新 Lesson 前执行）**：
+
+1. 检查是否存在 `lessons/prereq_diagnostic.md`（本课的诊断结果）
+2. 读取 `settings/background.md` 的"诊断历史与薄弱知识点"区域
+3. 检查本课知识点中是否有"薄弱知识点"记录
+4. 若有快速回顾标记 → 在 Lesson 文件的 `### 〇、知识回引` 之前插入"### 〇、快速回顾"小节：
+   ```markdown
+   ### 〇、快速回顾
+
+   > 诊断中发现你对"{missing_concept}"还不够清晰，这里先用一分钟补充一下：
+   >
+   > {用 2-3 句话 + 一个类比快速讲解缺失的概念}
+   >
+   > 了解这一点后，我们正式开始本课。
+   ```
+5. 检查 background.md 中是否有 Bloom 层级下调记录，若有，在 Lesson 文件元信息中标注实际目标层级
 
 **4.1 逆向设计（生成新 Lesson 时执行）**：
 1. 读取 `${SKILL_DIR}/references/bloom-taxonomy.md` 和 `${SKILL_DIR}/references/socratic-method.md`
