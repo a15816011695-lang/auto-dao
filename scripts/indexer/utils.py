@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 from pathlib import Path
 from typing import Optional
@@ -10,7 +9,7 @@ from typing import Optional
 
 def discover_material_folders(base: Path) -> list[Path]:
     """Discover all material folders under base (each has full.md)."""
-    folders = []
+    folders: list[Path] = []
     if not base.exists():
         return folders
     for item in sorted(base.iterdir()):

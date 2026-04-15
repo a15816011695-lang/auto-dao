@@ -1,9 +1,7 @@
 """Image index builder — extract descriptions and tags from markdown context."""
 from __future__ import annotations
 
-import os
 import re
-import json as _json
 from pathlib import Path
 from typing import Optional
 
@@ -13,7 +11,7 @@ try:
 except ImportError:
     JIEBA_AVAILABLE = False
 
-from indexer.utils import read_text_safe, read_json_safe, normalize_text
+from indexer.utils import read_text_safe, read_json_safe
 from indexer.md_parser import extract_headings, extract_image_refs, Heading
 
 
@@ -58,7 +56,7 @@ def _find_nearest_heading(line_no: int, headings: list[Heading]) -> Optional[Hea
 
 def _build_heading_chain(line_no: int, headings: list[Heading]) -> list[str]:
     """Build heading chain (H1 -> H2 -> ...) up to the given line."""
-    chain = []
+    chain: list[str] = []
     for h in headings:
         if h.level in (1, 2) and len(chain) < 5:
             chain.append(h.text)
@@ -119,9 +117,8 @@ def build_image_index(folder: Path) -> dict:
     image_refs = extract_image_refs(text)
 
     # Load layout for page estimation (best effort)
-    layout = None
-    if layout_json.exists():
-        layout = read_json_safe(layout_json)
+    # (layout data is read but not yet consumed by downstream pipeline)
+    _ = read_json_safe(layout_json) if layout_json.exists() else None
 
     result_images = []
     for ref in image_refs:

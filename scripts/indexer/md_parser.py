@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -46,7 +45,6 @@ def extract_image_refs(text: str, max_context_chars: int = 300) -> list[ImageRef
         if not m:
             continue
 
-        image_path = m.group(1)
         img_hash = m.group(2)
 
         # Collect context before (from previous line back to max chars)

@@ -23,11 +23,8 @@ import re
 import sys
 from pathlib import Path
 
-try:
-    import jsonschema
-    _HAS_JSONSCHEMA = True
-except ImportError:
-    _HAS_JSONSCHEMA = False
+# jsonschema is an optional dependency for schema validation.
+# When available, it enables strict validation of session_state.json.
 
 # ---------------------------------------------------------------------------
 # Schema

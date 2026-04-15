@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 import re
-from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 try:
     import jieba
@@ -15,10 +13,7 @@ except ImportError:
     JIEBA_AVAILABLE = False
 
 from indexer.utils import (
-    discover_material_folders,
     read_text_safe,
-    read_json_safe,
-    normalize_text,
     extract_folder_label,
 )
 from indexer.md_parser import extract_headings, extract_image_refs, Heading
