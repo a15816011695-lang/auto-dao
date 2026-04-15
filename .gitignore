@@ -204,3 +204,4 @@ tmp/
 # cache directory
 cache/
 !cache/README.md
+.claude/settings.json
