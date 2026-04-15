@@ -62,8 +62,12 @@ def _tokenize(text: str) -> list[str]:
 
 def _heading_keywords(heading: Heading) -> list[str]:
     """Extract keywords from a heading using jieba."""
-    # Remove numbering (e.g. "1.1 ", "1) ", "（1）")
-    text = re.sub(r"^[\d\.（()）\u4e00-\u9fff]+\s*", "", heading.text)
+    # Remove numbering (e.g. "1.1 ", "1) ", "(3) ", "（3）", "一、")
+    # Step 1: strip Western-style numbering (digits, dots, parens) - but NOT Chinese chars
+    # (Chinese chars are in content, not numbering)
+    text = re.sub(r"^\d+[.）\)]?\s*", "", heading.text)
+    # Step 2: strip Chinese numeral numbering (一、 or 一.)
+    text = re.sub(r"^[ⅣXLIVCDM一二三四五六七八九十百千]+[.、\s]+", "", text)
     return _tokenize(text)
 
 

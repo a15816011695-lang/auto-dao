@@ -33,13 +33,17 @@ def read_json_safe(path: Path) -> Optional[dict | list]:
 
 
 def read_text_safe(path: Path) -> Optional[str]:
-    """Read text file with multiple encoding fallbacks."""
+    """Read text file with multiple encoding fallbacks. Handles UTF-8 BOM."""
     if not path.exists():
         return None
-    for enc in ("utf-8", "utf-8-sig", "gbk", "gb2312", "latin1"):
+    for enc in ("utf-8-sig", "utf-8", "gbk", "gb2312", "latin1"):
         try:
             with open(path, encoding=enc) as f:
-                return f.read()
+                content = f.read()
+                # utf-8-sig already stripped BOM; for utf-8, strip it manually
+                if enc == "utf-8" and content.startswith("\ufeff"):
+                    content = content[1:]
+                return content
         except UnicodeDecodeError:
             continue
     return None

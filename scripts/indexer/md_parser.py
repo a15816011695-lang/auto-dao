@@ -42,7 +42,7 @@ def extract_image_refs(text: str, max_context_chars: int = 300) -> list[ImageRef
     total = len(lines)
 
     for i, line in enumerate(lines):
-        m = re.search(r"!\[.*?\]\((images?/([a-f0-9]+)\.jpg)\)", line, re.IGNORECASE)
+        m = re.search(r"!\[.*?\]\((images?/([a-zA-Z0-9_-]+)\.jpg)\)", line, re.IGNORECASE)
         if not m:
             continue
 
