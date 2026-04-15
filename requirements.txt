@@ -1,5 +1,11 @@
-# See pyproject.toml for canonical dependency list
+# Install with: pip install -e .
+# This file is for: pip install -r requirements.txt
+# For editable install use: pip install -e .
+
 requests>=2.28.0
 python-dotenv>=1.0.0
 jsonschema>=4.0.0
 urllib3>=1.26.0
+pytest>=8.0.0
+jieba>=0.42.1
+python-Levenshtein>=0.21.0

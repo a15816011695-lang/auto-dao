@@ -9,13 +9,10 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "jsonschema>=4.0.0",
     "urllib3>=1.26.0",
+    "pytest>=8.0.0",
+    "jieba>=0.42.1",
+    "python-Levenshtein>=0.21.0",
 ]
-
-[project.scripts]
-convert = "scripts.convert_to_markdown:main"
-validate-state = "scripts.session.validate_state:main"
-check-examples = "scripts.ci.check_examples:main"
-schedule-review = "scripts.session.schedule_review:main"
 
 [build-system]
 requires = ["setuptools>=68.0"]
