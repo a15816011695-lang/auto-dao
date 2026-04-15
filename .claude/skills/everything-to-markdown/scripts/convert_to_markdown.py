@@ -25,7 +25,7 @@ SUPPORTED_EXTENSIONS = {
 
 # 工程护栏
 CONNECT_TIMEOUT = 30   # 连接超时（秒）
-READ_TIMEOUT = 300     # 读取超时（秒）
+READ_TIMEOUT = 600     # 读取超时（秒）
 MAX_FILE_SIZE_MB = 200 # MinerU 上限
 MAX_RETRIES = 3        # 请求重试次数
 
@@ -233,8 +233,8 @@ def create_task_from_file(api_key: str, file_path: str) -> tuple:
     return batch_id
 
 
-def poll_task_result(api_key: str, task_id: str = None, batch_id: str = None, 
-                     timeout: int = 300, interval: int = 5) -> dict:
+def poll_task_result(api_key: str, task_id: str = None, batch_id: str = None,
+                     timeout: int = 600, interval: int = 5) -> dict:
     """
     轮询获取任务结果
     
