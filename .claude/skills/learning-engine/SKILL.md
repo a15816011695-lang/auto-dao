@@ -340,6 +340,72 @@ This skill operates as a single inline agent — no role switching required.
 
 ---
 
+### Step 3.5: 课前诊断（Pre-Assessment）
+
+🚧 **GATE**: Step 3 complete；学习目录存在，当前 lesson index 已确定；用户背景已加载。
+
+> **前置说明**：此步骤用于在学习新 Lesson 之前检测用户是否具备所需的前置知识。
+> 若诊断通过（掌握度 ≥ 60%），直接进入 Step 4。
+> 若诊断未通过，插入前置补救课，确保前置缺口填补后再进入主课。
+
+🛠️ **EXECUTION**:
+
+**3.5.1 前置知识缺口分析（自动 + 手动）**：
+
+1. **递归依赖链展开**：读取 `settings/prerequisite-map.md`（若存在），对下一课涉及的核心概念递归展开依赖链
+2. **自动检测**：对下一课草稿中出现的术语，若在已学课程中从未出现，标记为潜在前置缺口
+3. **合并去重**：合并自动检测 + prerequisite-map 手动标注的结果
+
+**3.5.2 诊断模式选择**：
+
+在对话中发送诊断模式选择菜单，快速模式(3题)或完整模式(8题)
+
+**3.5.3 生成诊断小测**：
+
+读取模板 `${SKILL_DIR}/templates/prereq-diagnostic-template.md`，根据前置缺口生成诊断题
+
+**3.5.4 诊断通知**：
+
+通知用户诊断文件位置，提醒完成
+
+⛔ **BLOCKING**：等待用户说"诊断完成"或选择跳过
+
+**3.5.5 批改与判定**：
+
+三档评估：✅完全正确(1.0分)/⚠️部分正确(0.5分)/❌错误(0.0分)
+掌握度 = (完全正确×1 + 部分正确×0.5)/总题数×100%
+
+判定路由：≥60%通过 / 33%-60%部分通过→快速回顾 / <33%→补救课
+
+**3.5.6 Bloom层级动态下调**：
+
+连续2次补救课后自动降低目标Bloom层级
+
+✅ **CHECKPOINT**:
+```markdown
+## ✅ Step 3.5 Complete
+- [x] 前置知识缺口分析完成
+- [x] 诊断完成
+- [ ] **Next**: auto-proceed based on result
+```
+
+**3.5.7 前置补救课插入 + 闭环**：
+
+触发条件：掌握度<33%
+
+1. 生成前置补救课（每个缺口单独1个）
+2. 通知用户补救课已生成
+3. 等待用户完成
+4. 复诊（快速3题）
+5. 复诊批改 → 通过则进主课，否则继续补救或降级Bloom
+
+✅ **Final CHECKPOINT**:
+```markdown
+## ✅ Step 3.5 Complete — All pre-assessment checks passed
+```
+
+---
+
 ### Step 4: 文件驱动交互式学习 (File-Based Interactive Learning)
 
 🚧 **GATE**: Step 3 complete；学习目录存在，当前 lesson index 已确定。
