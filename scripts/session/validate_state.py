@@ -19,31 +19,29 @@ Exit codes:
 """
 
 import json
-import os
 import re
 import sys
 from pathlib import Path
 
+try:
+    import jsonschema
+    _HAS_JSONSCHEMA = True
+except ImportError:
+    _HAS_JSONSCHEMA = False
+
 # ---------------------------------------------------------------------------
-# Helpers
+# Schema
 # ---------------------------------------------------------------------------
 
-SCHEMA_VERSION = "2.0"
+_SCHEMA_PATH = Path(__file__).resolve().parents[2] / ".claude" / "skills" / "learning-engine" / "templates" / "session-state.schema.json"
+with open(_SCHEMA_PATH, "r", encoding="utf-8") as f:
+    _SCHEMA = json.load(f)
 
-VALID_PHASES = {"init", "preprocessing", "learning", "review", "completed"}
-VALID_WAIT_REASONS = {"awaiting_answer", "awaiting_grading", "awaiting_user_choice", None}
-VALID_CF_MODES = {"on", "off", "auto", None}
-
-REQUIRED_FIELDS = [
-    "schema_version",
-    "topic_id",
-    "source_path",
-    "phase",
-    "current_lesson",
-    "total_lessons",
-    "created_at",
-    "updated_at",
-]
+SCHEMA_VERSION = _SCHEMA["properties"]["schema_version"]["const"]
+VALID_PHASES = set(_SCHEMA["properties"]["phase"]["enum"])
+VALID_CF_MODES = set(_SCHEMA["properties"]["counterfactual_mode"]["enum"])
+VALID_WAIT_REASONS = set(_SCHEMA["properties"]["wait_reason"]["enum"])
+REQUIRED_FIELDS = set(_SCHEMA["required"])
 
 
 def _lesson_indices(lessons_dir: Path) -> list[int]:
@@ -67,7 +65,10 @@ class CheckResult:
         self.detail = detail
 
     def __str__(self):
-        mark = "✅" if self.passed else "❌"
+        if sys.platform == "win32":
+            mark = "[PASS]" if self.passed else "[FAIL]"
+        else:
+            mark = "✅" if self.passed else "❌"
         msg = f"{mark} [{self.name}]"
         if self.detail:
             msg += f"  {self.detail}"
@@ -144,18 +145,19 @@ def check_lesson_count(state: dict, lessons_dir: Path) -> CheckResult:
 
 
 def check_lesson_continuity(lessons_dir: Path) -> CheckResult:
-    """Lesson files should be numbered consecutively (1, 2, 3, ...)."""
+    """Lesson files should be numbered sequentially starting from 1, with gaps allowed for remedial/branch lessons."""
     if not lessons_dir.exists():
         return CheckResult("lesson_continuity", True, "no lessons dir")
     indices = _lesson_indices(lessons_dir)
     if not indices:
         return CheckResult("lesson_continuity", True, "no lesson files")
-    expected = list(range(1, max(indices) + 1))
-    ok = indices == expected
+    # Allow gaps due to remedial/branch lessons (lesson_N_remedial.md, lesson_N_branch.md)
+    # Check: sorted, unique, starts at 1
+    ok = indices == sorted(set(indices)) and indices[0] == 1
     return CheckResult(
         "lesson_continuity",
         ok,
-        f"expected {expected}, got {indices}" if not ok else "",
+        f"indices must start at 1 and be unique, got {indices}" if not ok else "",
     )
 
 

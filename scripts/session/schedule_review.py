@@ -38,6 +38,11 @@ def get_due_items(queue: dict, now: datetime | None = None) -> list[dict]:
         next_review = item.get("next_review_at")
         if next_review:
             review_dt = datetime.fromisoformat(next_review)
+            # Ensure UTC-aware comparison: if naive, assume local; if aware, normalize to UTC
+            if review_dt.tzinfo is None:
+                review_dt = review_dt.replace(tzinfo=timezone.utc)
+            else:
+                review_dt = review_dt.astimezone(timezone.utc)
             if review_dt <= now:
                 due.append(item)
     return due
