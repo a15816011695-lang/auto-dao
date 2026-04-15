@@ -121,8 +121,9 @@ This skill operates as a single inline agent — no role switching required.
 | 架构图模板 | `${SKILL_DIR}/templates/architecture-map-template.md` | GitHub 项目学习可选产物：模块依赖与数据流 |
 | 阅读顺序模板 | `${SKILL_DIR}/templates/file-reading-order-template.md` | GitHub 项目学习可选产物：源码阅读路径与首次贡献建议 |
 | 指标模板 | `${SKILL_DIR}/templates/metrics-template.json` | 会话事件日志，用于教学策略量化分析 |
-
-### References
+| 诊断模板 | `${SKILL_DIR}/templates/prereq-diagnostic-template.md` | 课前诊断文件生成模板 |
+| 复诊模板 | `${SKILL_DIR}/templates/prereq-diagnostic-recheck-template.md` | 补救课后复诊文件模板 |
+| 补救课模板 | `${SKILL_DIR}/templates/remediation-lesson-template.md` | 前置补救课内容模板 |
 
 | Resource | Path |
 |----------|------|
