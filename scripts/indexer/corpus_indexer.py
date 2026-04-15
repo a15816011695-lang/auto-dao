@@ -14,14 +14,14 @@ try:
 except ImportError:
     JIEBA_AVAILABLE = False
 
-from .utils import (
+from indexer.utils import (
     discover_material_folders,
     read_text_safe,
     read_json_safe,
     normalize_text,
     extract_folder_label,
 )
-from .md_parser import extract_headings, extract_image_refs, Heading
+from indexer.md_parser import extract_headings, extract_image_refs, Heading
 
 
 # Chinese stopwords to filter out

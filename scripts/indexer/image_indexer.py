@@ -13,8 +13,8 @@ try:
 except ImportError:
     JIEBA_AVAILABLE = False
 
-from .utils import read_text_safe, normalize_text
-from .md_parser import extract_headings, extract_image_refs, Heading
+from indexer.utils import read_text_safe, read_json_safe, normalize_text
+from indexer.md_parser import extract_headings, extract_image_refs, Heading
 
 
 # Same STOPWORDS from corpus_indexer
@@ -121,7 +121,6 @@ def build_image_index(folder: Path) -> dict:
     # Load layout for page estimation (best effort)
     layout = None
     if layout_json.exists():
-        from .utils import read_json_safe
         layout = read_json_safe(layout_json)
 
     result_images = []
