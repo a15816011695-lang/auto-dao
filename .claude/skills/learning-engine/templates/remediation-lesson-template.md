@@ -5,6 +5,8 @@
 
 **诊断触发**：前置诊断掌握度 {percentage}%（{wrong_count} 题错误）
 **涉及前置缺口**：{gap_1}、{gap_2}、...
+**概念标签**：{concept_tag}
+**前置依赖**：{prerequisites}
 
 ---
 

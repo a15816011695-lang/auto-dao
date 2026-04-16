@@ -46,6 +46,38 @@
 
 ---
 
+## 概念标签与依赖图
+
+> **概念标签（Concept Tags）**：每个 Lesson 的核心知识点标签，用于精确追踪和诊断路由。
+> **前置依赖**：哪些 Lesson 必须先完成才能进入本 Lesson。
+
+### 概念标签 → Lesson 映射
+
+| Concept Tag | 所属 Lesson | Bloom | 状态 |
+|-------------|------------|-------|------|
+| {topic}-{concept-a} | Lesson {n} | L2 | ✅ 已掌握 |
+| {topic}-{concept-b} | Lesson {n} | L3 | ✅ 已掌握 |
+| {topic}-{concept-c} | Lesson {n+1} | L3 | 🔄 学习中 |
+| {topic}-{concept-d} | Lesson {n+2} | L3 | ⏳ 待学习 |
+
+### 前置依赖图（Mermaid）
+
+```mermaid
+graph LR
+    Lesson_{n}["Lesson {n}\n({topic}-{concept-a})"]
+    Lesson_{n+1}["Lesson {n+1}\n({topic}-{concept-b})"]
+    Lesson_{n+2}["Lesson {n+2}\n({topic}-{concept-c})"]
+    Lesson_{n+3}["Lesson {n+3}\n({topic}-{concept-d})"]
+
+    Lesson_{n} --> Lesson_{n+1}
+    Lesson_{n+1} --> Lesson_{n+2}
+    Lesson_{n+2} --> Lesson_{n+3}
+```
+
+> 依赖图自动从各 Lesson 元信息中的 `prerequisites` 字段派生。手动调整依赖关系时，同步更新各 Lesson 文件的 `前置依赖` 元信息。
+
+---
+
 ## 里程碑
 
 - [x] 🎯 里程碑 1: {milestone_1} - {achieved_date}

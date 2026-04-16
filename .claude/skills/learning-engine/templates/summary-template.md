@@ -16,15 +16,19 @@
 
 ## 已掌握知识点
 
+> **数据来源**：`session_state.json` → `learner_model.concept_mastery`
+
 ### ✅ 完全掌握
 
-- {mastered_concept_1}
-- {mastered_concept_2}
+| Concept Tag | Lesson | Bloom | 自信度偏差 | 测试次数 |
+|-------------|--------|-------|-----------|---------|
+| {topic}-{concept-a} | Lesson {n} | L3 | 校准良好 | 3 |
 
 ### 🔄 基本掌握
 
-- {partially_mastered_concept_1}
-- {partially_mastered_concept_2}
+| Concept Tag | Lesson | Bloom | 自信度偏差 | 测试次数 |
+|-------------|--------|-------|-----------|---------|
+| {topic}-{concept-b} | Lesson {n} | L3 | 谨慎型 | 2 |
 
 ---
 

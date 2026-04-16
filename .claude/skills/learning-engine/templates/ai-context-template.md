@@ -16,17 +16,23 @@
 
 ## 用户画像快照
 
-| 维度 | 观察 |
-|------|------|
-| 背景水平 | {background_level} |
-| 认知偏好 | {cognitive_preference} |
-| 常见错误模式 | {error_patterns} |
-| 答题风格 | {answer_style} |
-| 认知难度反馈 | {difficulty_feedback} |
+> **权威源**：`session_state.json` → `learner_model`
+> 以下字段的详细数据以 learner_model 为准，本节仅为人可读摘要。
+
+| 维度 | 值 | 来源 |
+|------|-----|------|
+| 目标 Bloom 层级 | L{bloom_target} | session_state.learner_model.bloom_target |
+| 整体自信度偏差 | {overall_confidence_bias} | learner_model.overall_confidence_bias |
+| 偏好节奏 | {preferred_pace} | learner_model.preferred_pace |
+| 已测概念数 | {concept_count} | learner_model.concept_mastery 长度 |
+| 整体掌握率 | {overall_mastery_rate}% | learner_model 聚合计算 |
 
 ## 错误模式分析
 
-<!-- 从错题记录中提炼的高频错误类型，用于遗忘检测和动态支架决策 -->
+> **权威源**：`session_state.json` → `learner_model.concept_mastery[<concept_tag>].misconception_tags`
+> 以下数据从 learner_model 派生，用于遗忘检测和动态支架决策。
+
+<!-- 从 learner_model.concept_mastery[concept_tag].misconception_tags 聚合提炼高频错误类型 -->
 
 | 错误类型 | 频次 | 典型表现 | 建议策略 |
 |---------|------|---------|---------|

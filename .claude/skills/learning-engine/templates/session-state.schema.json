@@ -97,6 +97,76 @@
       "type": "string",
       "format": "date-time",
       "description": "ISO 8601 timestamp of last state update"
+    },
+    "learner_model": {
+      "type": "object",
+      "description": "Dynamic learner model — updated after each diagnostic, lesson, and review cycle",
+      "properties": {
+        "concept_mastery": {
+          "type": "object",
+          "description": "Maps concept_tag -> mastery record",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "lesson_index": {
+                "type": "integer",
+                "description": "Lesson where this concept was taught"
+              },
+              "mastery_level": {
+                "type": "string",
+                "enum": ["untested", "weak", "developing", "strong"],
+                "description": "Aggregated mastery across all assessments"
+              },
+              "confidence_bias": {
+                "type": "string",
+                "enum": ["underconfident", "calibrated", "overconfident", "unknown"],
+                "description": "Pattern: high confidence + poor results = overconfident"
+              },
+              "misconception_tags": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Persistent error pattern labels (e.g. 'confuses_mutability', 'off_by_one')"
+              },
+              "test_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "correct_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "last_tested_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": ["mastery_level", "confidence_bias", "test_count", "correct_count"],
+            "additionalProperties": false
+          }
+        },
+        "overall_confidence_bias": {
+          "type": "string",
+          "enum": ["underconfident", "calibrated", "overconfident", "unknown"],
+          "description": "Aggregated confidence bias across all recent assessments"
+        },
+        "preferred_pace": {
+          "type": "string",
+          "enum": ["slow", "moderate", "fast"],
+          "description": "Inferred from lesson completion speed and remediation frequency"
+        },
+        "bloom_target": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Current target Bloom level (may be lowered by Step 3.5连续补救课后自动下调)"
+        },
+        "last_updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["concept_mastery", "overall_confidence_bias", "bloom_target", "last_updated_at"],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
