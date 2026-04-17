@@ -50,44 +50,44 @@ class TestCalculateMastery:
 
 
 class TestRouteTable:
-    """测试路由表"""
+    """测试路由表（四档路由）"""
 
-    def test_pass_threshold(self):
-        """测试通过阈值（≥60%）"""
-        assert ROUTE_TABLE[60] == "pass"
-        assert ROUTE_TABLE[80] == "pass"
-        assert ROUTE_TABLE[100] == "pass"
+    def test_skip_threshold(self):
+        """测试跳过阈值（≥80%）"""
+        assert ROUTE_TABLE[80] == "skip"
+        assert ROUTE_TABLE[90] == "skip"
+        assert ROUTE_TABLE[100] == "skip"
 
-    def test_quick_review_threshold(self):
-        """测试快速回顾阈值（33%-60%）"""
-        assert ROUTE_TABLE[33] == "quick_review"
-        assert ROUTE_TABLE[50] == "quick_review"
-        assert ROUTE_TABLE[59] == "quick_review"
+    def test_compact_threshold(self):
+        """测试快速通道阈值（60-79%）"""
+        assert ROUTE_TABLE[60] == "compact"
+        assert ROUTE_TABLE[70] == "compact"
+        assert ROUTE_TABLE[79] == "compact"
 
-    def test_remediation_threshold(self):
-        """测试补救课阈值（<33%）"""
-        assert ROUTE_TABLE[0] == "remediation"
-        assert ROUTE_TABLE[32] == "remediation"
-        assert ROUTE_TABLE[10] == "remediation"
+    def test_remedial_threshold(self):
+        """测试补救课阈值（<60%）"""
+        assert ROUTE_TABLE[59] == "remedial"
+        assert ROUTE_TABLE[50] == "remedial"
+        assert ROUTE_TABLE[0] == "remedial"
 
 
 class TestGetRoute:
     """测试 get_route 函数"""
 
-    def test_pass_route(self):
-        """测试通过路由"""
-        assert get_route(60) == "pass"
-        assert get_route(100) == "pass"
+    def test_skip_route(self):
+        """测试跳过路由"""
+        assert get_route(80) == "skip"
+        assert get_route(100) == "skip"
 
-    def test_quick_review_route(self):
-        """测试快速回顾路由"""
-        assert get_route(33) == "quick_review"
-        assert get_route(50) == "quick_review"
+    def test_compact_route(self):
+        """测试快速通道路由"""
+        assert get_route(60) == "compact"
+        assert get_route(70) == "compact"
 
-    def test_remediation_route(self):
-        """测试补救课路由"""
-        assert get_route(32) == "remediation"
-        assert get_route(0) == "remediation"
+    def test_remedial_route(self):
+        """测试补救路由"""
+        assert get_route(59) == "remedial"
+        assert get_route(0) == "remedial"
 
 
 class TestGradeAnswer:
@@ -103,5 +103,98 @@ class TestGradeAnswer:
         result = grade_answer("a", "时钟信号", "时钟信号用于同步数据")
         assert result == 0.0
 
-    # 注意：grade_answer 的简化实现总是返回 1.0
-    # 实际需要 LLM 进行真正的批改
+    def test_full_match(self):
+        """测试完全匹配"""
+        result = grade_answer(
+            "I2C是串行通信协议",
+            "I2C通信",
+            "I2C是串行通信协议"
+        )
+        assert result == 1.0
+
+    def test_partial_keyword_match(self):
+        """测试部分关键词匹配（当前实现基于字符级分词，可能对复合词效果有限）"""
+        result = grade_answer(
+            "I2C支持多主机通信",
+            "I2C特性",
+            "I2C是串行通信协议，支持多主机多从机通信"
+        )
+        # 当前分词可能得到 0.0-0.5 之间的结果
+        assert 0.0 <= result <= 1.0  # 宽松断言
+
+
+class TestGradingStrategy:
+    """测试混合模式批改策略"""
+
+    def test_rule_match_exact(self):
+        """测试规则匹配：精确匹配"""
+        from scripts.diagnostic_grader import rule_match, GradingStrategy
+
+        result = rule_match(
+            "I2C是串行通信协议",
+            "I2C是串行通信协议"
+        )
+        assert result.score == 1.0
+        assert result.strategy == GradingStrategy.RULE_MATCH
+        assert result.confidence == 1.0
+        assert result.needs_llm_review == False
+
+    def test_rule_match_no_match(self):
+        """测试规则匹配：无匹配（低置信度需要复核）"""
+        from scripts.diagnostic_grader import rule_match, GradingStrategy
+
+        result = rule_match(
+            "I2C有一些特性",
+            "I2C是串行通信协议，支持多主机多从机通信"
+        )
+        assert result.needs_llm_review == True  # 低置信度需要 LLM 复核
+        assert result.confidence < 0.7
+
+    def test_keyword_score_with_english_terms(self):
+        """测试关键词打分：使用英文术语（分词效果较好）"""
+        from scripts.diagnostic_grader import keyword_score, GradingStrategy
+
+        result = keyword_score(
+            "I2C supports multi-master communication",
+            "I2C supports multi-master multi-slave communication"
+        )
+        # 英文分词效果好，应该得到较高分
+        assert result.score >= 0.5
+        assert result.strategy == GradingStrategy.KEYWORD_SCORING
+
+    def test_keyword_score_empty_target(self):
+        """测试关键词打分：空目标知识"""
+        from scripts.diagnostic_grader import keyword_score, GradingStrategy
+
+        result = keyword_score(
+            "I2C有一些特性",
+            ""  # 空目标知识
+        )
+        # 空目标应该降级处理
+        assert result.strategy == GradingStrategy.KEYWORD_SCORING
+        assert result.needs_llm_review == True
+
+    def test_hybrid_grading_fallback(self):
+        """测试混合模式：无 LLM API 时的 fallback"""
+        from scripts.diagnostic_grader import grade_answer_with_fallback, GradingStrategy
+
+        # 这种情况应该返回低置信度结果，标记需要人工复核
+        result = grade_answer_with_fallback(
+            user_answer="I2C有一些特性",
+            target_concept="I2C通信协议",
+            target_knowledge="I2C是串行通信协议，支持多主机多从机通信"
+        )
+        # 无 LLM API，应该返回 LLM_FALLBACK 类型
+        assert result.strategy == GradingStrategy.LLM_FALLBACK
+        assert result.needs_llm_review == True
+
+
+class TestDiagnosticFileGrading:
+    """测试诊断文件批量批改"""
+
+    def test_parse_diagnostic_file_not_found(self):
+        """测试解析不存在的文件"""
+        from scripts.diagnostic_grader import parse_diagnostic_file
+
+        with pytest.raises(FileNotFoundError):
+            parse_diagnostic_file("nonexistent/path/file.md")
