@@ -1,7 +1,9 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "2.2",
   "topic_id": "golden-example",
+  "topic_name": "黄金样例 — auto-dao 完整流程演示",
   "source_path": "materials/example-guide.md",
+  "processed_path": "materials/example-guide.md",
   "source_hash": "sha256:abc123example",
   "phase": "completed",
   "current_lesson": 2,
@@ -13,6 +15,44 @@
   "counterfactual_mode": "off",
   "learning_language": "zh",
   "wait_reason": null,
+  "repo_commit_hash": null,
+  "learner_model": {
+    "schema_version": "1.0",
+    "concept_mastery": {
+      "autodao-file-driven": {
+        "lesson_index": 1,
+        "mastery_level": "strong",
+        "confidence_bias": "calibrated",
+        "misconception_tags": [],
+        "test_count": 3,
+        "correct_count": 3,
+        "last_tested_at": "2026-04-10T14:30:00+08:00"
+      },
+      "autodao-state-authority": {
+        "lesson_index": 2,
+        "mastery_level": "developing",
+        "confidence_bias": "overconfident",
+        "misconception_tags": ["confuses_authority_order"],
+        "test_count": 4,
+        "correct_count": 3,
+        "last_tested_at": "2026-04-10T15:15:00+08:00"
+      }
+    },
+    "overall_confidence_bias": "calibrated",
+    "preferred_pace": "moderate",
+    "bloom_target": 2,
+    "last_updated_at": "2026-04-10T15:30:00+08:00"
+  },
   "created_at": "2026-04-10T14:00:00+08:00",
-  "updated_at": "2026-04-10T15:30:00+08:00"
+  "updated_at": "2026-04-10T15:30:00+08:00",
+  "_file_paths": {
+    "summary": "summary.md",
+    "roadmap": "roadmap_status.md",
+    "ai_context": "_ai_context.md",
+    "session_state": "session_state.json",
+    "metrics": "metrics.json",
+    "review_queue": "review_queue.json",
+    "course_overview": "course_overview.md",
+    "report": "report.md"
+  }
 }

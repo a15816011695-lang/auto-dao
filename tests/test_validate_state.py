@@ -23,12 +23,19 @@ from scripts.session.validate_state import (
 
 class TestCheckSchemaVersion:
     def test_valid(self):
-        state = {"schema_version": "2.0"}
+        state = {"schema_version": "2.2"}
         result = check_schema_version(state)
         assert result.passed
 
     def test_invalid(self):
         state = {"schema_version": "1.0"}
+        result = check_schema_version(state)
+        assert not result.passed
+
+    def test_old_version_rejected(self):
+        # 2.0/2.1 were prior schemas without _file_paths / learner_model required fields.
+        # After 2.2 is declared canonical, older versions must be flagged for migration.
+        state = {"schema_version": "2.0"}
         result = check_schema_version(state)
         assert not result.passed
 
@@ -41,7 +48,7 @@ class TestCheckSchemaVersion:
 class TestCheckRequiredFields:
     def test_all_present(self):
         state = {
-            "schema_version": "2.0",
+            "schema_version": "2.2",
             "topic_id": "test",
             "source_path": "test.pdf",
             "phase": "learning",
@@ -54,7 +61,7 @@ class TestCheckRequiredFields:
         assert result.passed
 
     def test_missing_fields(self):
-        state = {"schema_version": "2.0", "topic_id": "test"}
+        state = {"schema_version": "2.2", "topic_id": "test"}
         result = check_required_fields(state)
         assert not result.passed
         assert len(result.detail) > 0

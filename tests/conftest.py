@@ -109,9 +109,9 @@ def temp_session(tmp_path: Path) -> Path:
     lessons = session / "lessons"
     lessons.mkdir()
 
-    # Valid session_state.json
+    # Valid session_state.json (schema v2.2)
     state = {
-        "schema_version": "2.0",
+        "schema_version": "2.2",
         "topic_id": "test-topic",
         "source_path": "test.pdf",
         "phase": "learning",
@@ -120,7 +120,7 @@ def temp_session(tmp_path: Path) -> Path:
         "created_at": "2026-01-01T00:00:00+08:00",
         "updated_at": "2026-01-01T00:00:00+08:00",
         "counterfactual_mode": "off",
-        "wait_reason": "user_input",
+        "wait_reason": "awaiting_answer",
         "mastery_passed": 0,
         "mastery_failed": 0,
         "mastery_rate": 0.0,

@@ -5,16 +5,16 @@
 2. 关键词打分（keyword_score）：部分关键词覆盖 → 中置信度
 3. LLM fallback（llm_fallback）：低置信度或答偏检测 → 需要人工/LLM复核
 
-四档路由（对应 Step 3.5）：
-- skip: ≥80% → 直接进入下一课
-- compact: 60-79% → 快速回顾薄弱点
-- full: N/A（本实现暂不区分）→ 完整讲解
-- remedial: <60% → 前置补救课
+四档路由（对应 SKILL.md Step 3.5.5）：
+- skip:     mastery ≥ 80%                                           → 可压缩讲解
+- compact:  60-79% 且 校准良好（calibrated）                         → 快速回顾薄弱点
+- full:     60-79% 且 过度自信/谨慎型（overconfident/underconfident） → 完整讲解 + 额外 Worked Example
+- remedial: mastery < 60%                                            → 前置补救课
 """
 
 from enum import Enum
 from dataclasses import dataclass
-from typing import List, Dict, Optional
+from typing import Callable, Dict, List, Optional
 
 class GradingStrategy(Enum):
     RULE_MATCH = "rule_match"      # 规则匹配 - 精确或高覆盖
@@ -33,7 +33,8 @@ class GradingResult:
     needs_llm_review: bool       # 是否需要人工/LLM复核
 
 
-# 路由表：掌握度 -> 行动（四档路由）
+# 路由表：掌握度 -> 行动（三档基础路由，不考虑 confidence_bias）
+# 完整四档路由需要使用 get_route(mastery_pct, dominant_bias=...)
 ROUTE_TABLE: Dict[int, str] = {}
 
 # 初始化路由表
@@ -41,9 +42,14 @@ for pct in range(0, 101):
     if pct >= 80:
         ROUTE_TABLE[pct] = "skip"      # Skip: ≥80%
     elif pct >= 60:
-        ROUTE_TABLE[pct] = "compact"   # Compact: 60-79%
+        ROUTE_TABLE[pct] = "compact"   # Compact: 60-79%（默认校准良好）
     else:
-        ROUTE_TABLE[pct] = "remedial" # Remedial: <60%
+        ROUTE_TABLE[pct] = "remedial"  # Remedial: <60%
+
+
+# confidence_bias 值 → 是否触发 Full 路由
+# SKILL.md Step 3.5.5：过度自信 + 谨慎型都会在 60-79% 区间升级到 Full
+FULL_ROUTE_BIASES = {"overconfident", "underconfident"}
 
 
 def calculate_mastery(scores: List[float]) -> float:
@@ -208,7 +214,7 @@ def grade_answer_with_fallback(
     user_answer: str,
     target_concept: str,
     target_knowledge: str,
-    llm_api: Optional[callable] = None
+    llm_api: Optional[Callable[[str], str]] = None,
 ) -> GradingResult:
     """
     混合模式批改主函数：规则匹配 → 关键词打分 → LLM fallback
@@ -260,7 +266,7 @@ def _llm_grade(
     user_answer: str,
     target_concept: str,
     target_knowledge: str,
-    api_func: callable
+    api_func: Callable[[str], str],
 ) -> GradingResult:
     """
     LLM 批改（实际使用需要配置 LLM API）
@@ -324,9 +330,27 @@ def grade_answer(
     return result.score
 
 
-def get_route(mastery_pct: float) -> str:
-    """根据掌握度返回四档路由"""
-    return ROUTE_TABLE.get(int(mastery_pct), "remedial")
+def get_route(mastery_pct: float, dominant_bias: Optional[str] = None) -> str:
+    """根据掌握度和主导自信度偏差返回四档路由（SKILL.md Step 3.5.5）。
+
+    Args:
+        mastery_pct: 综合掌握度百分比 (0-100)。
+        dominant_bias: 本轮诊断中主导的 confidence_bias 模式；取值应与
+            session_state.learner_model.overall_confidence_bias 的枚举保持一致：
+            ``"calibrated"`` / ``"overconfident"`` / ``"underconfident"`` / ``"unknown"``。
+            为 ``None`` 或 ``"calibrated"`` 时走基础三档；若为过度自信或谨慎型则在
+            60-79% 区间升级到 ``"full"``。
+
+    Returns:
+        ``"skip"``、``"compact"``、``"full"`` 或 ``"remedial"`` 之一。
+    """
+    # 输入规范化：负值或超过 100 的值向内收敛
+    pct = max(0, min(100, int(mastery_pct)))
+    base = ROUTE_TABLE.get(pct, "remedial")
+    # 仅当处于 compact 区间且自信度偏差属于 overconfident/underconfident 时升级到 full
+    if base == "compact" and dominant_bias in FULL_ROUTE_BIASES:
+        return "full"
+    return base
 
 
 def parse_diagnostic_file(diagnostic_path: str) -> list[dict]:
@@ -376,16 +400,22 @@ def parse_diagnostic_file(diagnostic_path: str) -> list[dict]:
 
 def grade_diagnostic_file(
     diagnostic_path: str,
-    question_count: int = None,
-    user_answers: list = None
+    question_count: Optional[int] = None,
+    user_answers: Optional[List[str]] = None,
+    dominant_bias: Optional[str] = None,
+    confidences: Optional[List[int]] = None,
 ) -> Dict:
     """
-    批量批改诊断文件（支持混合模式）
+    批量批改诊断文件（支持混合模式 + 四档路由）。
 
     Args:
         diagnostic_path: 诊断文件路径
         question_count: 诊断题数量（可选，从文件解析）
         user_answers: 用户答案列表（可选，从文件解析）
+        dominant_bias: 主导 confidence_bias（计算后传入 get_route）；
+            若为 ``None`` 且 ``confidences`` 非空，则自动由得分+自信度推断。
+        confidences: 每题 self-reported 自信度 1-5；若提供，则根据
+            SKILL.md Step 3.5.5 的四种偏移类别推断 dominant_bias。
 
     Returns:
         包含掌握度、路由、详细评分的字典
@@ -419,7 +449,13 @@ def grade_diagnostic_file(
         results.append(result)
 
     mastery = calculate_mastery(scores)
-    route = get_route(mastery)
+
+    # 若调用方没传入 dominant_bias 但提供了 confidences，则从 (score, confidence) 对推断
+    inferred_bias = dominant_bias
+    if inferred_bias is None and confidences:
+        inferred_bias = infer_dominant_bias(scores, confidences)
+
+    route = get_route(mastery, dominant_bias=inferred_bias)
 
     # 检查是否需要人工复核
     needs_review = any(r.needs_llm_review for r in results)
@@ -428,6 +464,7 @@ def grade_diagnostic_file(
         "mastery_pct": mastery,
         "route": route,
         "scores": scores,
+        "dominant_bias": inferred_bias,
         "results": [
             {"score": r.score, "strategy": r.strategy.value, "reason": r.reason}
             for r in results
@@ -435,8 +472,55 @@ def grade_diagnostic_file(
         "needs_review": needs_review,
         "skip": route == "skip",
         "compact": route == "compact",
-        "remedial": route == "remedial"
+        "full": route == "full",
+        "remedial": route == "remedial",
     }
+
+
+def classify_confidence_bias(score: float, confidence: int) -> str:
+    """给单道题分类 confidence_bias（SKILL.md Step 3.5.5）。
+
+    Args:
+        score: 答题得分 1.0/0.5/0.0。
+        confidence: 用户作答前自评 1-5。
+
+    Returns:
+        ``"overconfident"`` / ``"calibrated"`` / ``"underconfident"`` / ``"uncertain"``。
+        ``uncertain`` 对应"低自信 + 错" — 未转嫁到 learner_model 偏差，视为校准但需关注。
+    """
+    high_conf = confidence >= 4
+    low_conf = confidence <= 2
+    correct = score >= 1.0  # 只有完全正确记作掌握
+    partial_or_wrong = score < 1.0
+    if high_conf and partial_or_wrong:
+        return "overconfident"
+    if low_conf and correct:
+        return "underconfident"
+    if low_conf and partial_or_wrong:
+        return "uncertain"
+    return "calibrated"
+
+
+def infer_dominant_bias(scores: List[float], confidences: List[int]) -> str:
+    """汇总每题偏差，取"众数"为主导 bias（过度自信/谨慎型优先于校准）。
+
+    若 overconfident 与 underconfident 并列，取 overconfident（更紧急——需更多脚手架）。
+    若样本不足（长度不一致或 confidences 全空）则返回 ``"unknown"``。
+    """
+    if not scores or not confidences or len(scores) != len(confidences):
+        return "unknown"
+    counts: Dict[str, int] = {}
+    for s, c in zip(scores, confidences):
+        bias = classify_confidence_bias(s, c)
+        counts[bias] = counts.get(bias, 0) + 1
+    # 优先级：overconfident > underconfident > uncertain > calibrated
+    priority = ["overconfident", "underconfident", "uncertain", "calibrated"]
+    # 取出现次数最多的 bias；同频次按优先级打破平手
+    max_count = max(counts.values()) if counts else 0
+    for bias in priority:
+        if counts.get(bias, 0) == max_count and max_count > 0:
+            return bias
+    return "unknown"
 
 
 def _extract_answers_from_file(diagnostic_path: str, expected_count: int) -> list:

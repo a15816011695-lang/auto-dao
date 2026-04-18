@@ -4,14 +4,16 @@
 
 **主题**: {topic_name}
 **时间戳**: {timestamp}
+**完成进度**: {completed_lessons} / {total_lessons} ({progress_percentage}%)
 
 ---
 
 ## 整体进度
 
 ```
-总进度: {progress_percentage}%
-{progress_bar_visualization}
+{completed_lessons}/{total_lessons} Lessons ({progress_percentage}%)
+
+{'█' * int(progress_percentage/10)}{'░' * (10-int(progress_percentage/10))} {progress_percentage}%
 ```
 
 ---
@@ -31,18 +33,18 @@
 
 ### 模块 1: {module_1_name}
 
-| 知识点 | 状态 | 测试结果 |
-|--------|------|---------|
-| {point_1} | ✅ 已掌握 | {test_result_1} |
-| {point_2} | 🔄 学习中 | {test_result_2} |
-| {point_3} | ⏳ 待学习 | - |
+| 知识点 | Lesson | 状态 | 测试结果 |
+|--------|--------|------|---------|
+| {point_1} | L{n} | ✅ 已掌握 | {test_result_1} |
+| {point_2} | L{n} | 🔄 学习中 | {test_result_2} |
+| {point_3} | L{n+1} | ⏳ 待学习 | - |
 
 ### 模块 2: {module_2_name}
 
-| 知识点 | 状态 | 测试结果 |
-|--------|------|---------|
-| {point_4} | ⏳ 待学习 | - |
-| {point_5} | ⏳ 待学习 | - |
+| 知识点 | Lesson | 状态 | 测试结果 |
+|--------|--------|------|---------|
+| {point_4} | L{n+2} | ⏳ 待学习 | - |
+| {point_5} | L{n+3} | ⏳ 待学习 | - |
 
 ---
 
@@ -55,23 +57,23 @@
 
 | Concept Tag | 所属 Lesson | Bloom | 状态 |
 |-------------|------------|-------|------|
-| {topic}-{concept-a} | Lesson {n} | L2 | ✅ 已掌握 |
-| {topic}-{concept-b} | Lesson {n} | L3 | ✅ 已掌握 |
-| {topic}-{concept-c} | Lesson {n+1} | L3 | 🔄 学习中 |
-| {topic}-{concept-d} | Lesson {n+2} | L3 | ⏳ 待学习 |
+| {topic}-{concept-a} | L{n} | L2 | ✅ 已掌握 |
+| {topic}-{concept-b} | L{n} | L3 | ✅ 已掌握 |
+| {topic}-{concept-c} | L{n+1} | L3 | 🔄 学习中 |
+| {topic}-{concept-d} | L{n+2} | L3 | ⏳ 待学习 |
 
 ### 前置依赖图（Mermaid）
 
 ```mermaid
 graph LR
-    Lesson_{n}["Lesson {n}\n({topic}-{concept-a})"]
-    Lesson_{n+1}["Lesson {n+1}\n({topic}-{concept-b})"]
-    Lesson_{n+2}["Lesson {n+2}\n({topic}-{concept-c})"]
-    Lesson_{n+3}["Lesson {n+3}\n({topic}-{concept-d})"]
+    L{n}["L{n}\n({topic}-{concept-a})"]
+    L{n+1}["L{n+1}\n({topic}-{concept-b})"]
+    L{n+2}["L{n+2}\n({topic}-{concept-c})"]
+    L{n+3}["L{n+3}\n({topic}-{concept-d})"]
 
-    Lesson_{n} --> Lesson_{n+1}
-    Lesson_{n+1} --> Lesson_{n+2}
-    Lesson_{n+2} --> Lesson_{n+3}
+    L{n} --> L{n+1}
+    L{n+1} --> L{n+2}
+    L{n+2} --> L{n+3}
 ```
 
 > 依赖图自动从各 Lesson 元信息中的 `prerequisites` 字段派生。手动调整依赖关系时，同步更新各 Lesson 文件的 `前置依赖` 元信息。
@@ -83,7 +85,6 @@ graph LR
 - [x] 🎯 里程碑 1: {milestone_1} - {achieved_date}
 - [x] 🎯 里程碑 2: {milestone_2} - {achieved_date}
 - [ ] 🎯 里程碑 3: {milestone_3} - 预计: {expected_date}
-- [ ] 🎯 里程碑 4: {milestone_4} - 预计: {expected_date}
 - [ ] 🎁 最终目标: {final_goal}
 
 ---
@@ -92,13 +93,13 @@ graph LR
 
 | 日期 | Lesson | 状态 | 备注 |
 |------|--------|------|------|
-| {date_1} | Lesson {n} | 完成 | {note_1} |
-| {date_2} | Lesson {n+1} | 完成 | {note_2} |
-| {date_3} | Lesson {n+2} | 进行中 | {note_3} |
+| {date_1} | L{n} | ✅ 完成 | {note_1} |
+| {date_2} | L{n+1} | ✅ 完成 | {note_2} |
+| {date_3} | L{n+2} | 🔄 进行中 | {note_3} |
 
 <!-- 补救课与偏题分支示例（按需出现）：
-| {date_x} | 🔧 补救课 L{n}_remedial | 完成 | 触发原因：连续 2 课 mastery < 60%，回顾 {知识点} |
-| {date_y} | 🔀 分支课 L{n}_branch | 完成 | 用户偏题探索 {topic}，已回归主线 |
+| {date_x} | 🔧 补救课 L{n}_remedial | ✅ 完成 | 触发原因：连续 2 课 mastery < 60%，回顾 {知识点} |
+| {date_y} | 🔀 分支课 L{n}_branch | ✅ 完成 | 用户偏题探索 {topic}，已回归主线 |
 -->
 
 ---
@@ -142,3 +143,7 @@ graph LR
 
 - {update_note_1}
 - {update_note_2}
+
+---
+
+*本文件由学习引擎自动维护。核心状态数据以 `session_state.json` 为准。*

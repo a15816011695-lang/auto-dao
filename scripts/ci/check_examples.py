@@ -16,6 +16,14 @@ import re
 import sys
 from pathlib import Path
 
+# Ensure UTF-8 stdout even on Windows PowerShell (default cp936/GBK can't emit ✅ / ❌).
+if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+        sys.stderr.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except Exception:
+        pass  # Python <3.7 fallback; CI runs on 3.11+ so this is cosmetic.
+
 EXAMPLES_ROOT = Path("examples/learning-history")
 
 REQUIRED_FILES = ["summary.md", "roadmap_status.md"]

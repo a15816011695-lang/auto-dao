@@ -6,6 +6,8 @@
 **诊断模式**：{quick / full}
 **前置知识缺口**：{gap_1}、{gap_2}、{gap_3}
 
+> 📌 **批改与 learner_model 对接**：每道题都绑定一个 `concept_tag`，批改后按 tag 更新 `session_state.json` → `learner_model.concept_mastery[concept_tag]`，并根据自信度-正确性组合分类 `confidence_bias`（overconfident / calibrated / underconfident / uncertain）。
+
 ---
 
 ## 开始诊断
@@ -17,7 +19,9 @@
 
 {question_content}
 
+**概念标签 (concept_tag)**：`{topic}-{concept-slug}`
 **前置知识点**：{related_concept}
+**认知层级 (Bloom)**：L{target_bloom}
 **来源提示**：{source_hint}
 
 **自信度**（作答前填写，1-5）：

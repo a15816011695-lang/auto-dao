@@ -14,10 +14,11 @@
 """
 
 import re
-from typing import List, Set, Dict, Optional
 from pathlib import Path
+from typing import Callable, Dict, List, Optional, Set
 
 # 尝试导入 indexer 模块（可选依赖）
+indexer_tokenize: Optional[Callable[[str], List[str]]]
 try:
     import sys
     sys.path.insert(0, str(Path(__file__).parent))

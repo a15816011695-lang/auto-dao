@@ -16,6 +16,7 @@
 
 {question_content}
 
+**概念标签 (concept_tag)**：`{topic}-{concept-slug}`（须与前置补救课标签一致）
 **前置知识点**：{related_concept}
 
 **自信度**（作答前填写，1-5）：

@@ -15,12 +15,16 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "2.0"
+      "const": "2.2"
     },
     "topic_id": {
       "type": "string",
       "minLength": 1,
       "description": "Human-readable topic identifier, e.g. 'stm32-hal'"
+    },
+    "topic_name": {
+      "type": "string",
+      "description": "Human-readable display name of the topic (may include Chinese or non-ASCII chars)"
     },
     "source_path": {
       "type": "string",
@@ -167,6 +171,21 @@
       },
       "required": ["concept_mastery", "overall_confidence_bias", "bloom_target", "last_updated_at"],
       "additionalProperties": false
+    },
+    "_file_paths": {
+      "type": "object",
+      "description": "Logical name to actual filename mapping for all session-level files. Allows renaming without breaking AI references.",
+      "properties": {
+        "summary": { "type": "string" },
+        "roadmap": { "type": "string" },
+        "ai_context": { "type": "string" },
+        "session_state": { "type": "string" },
+        "metrics": { "type": "string" },
+        "review_queue": { "type": "string" },
+        "course_overview": { "type": "string" },
+        "report": { "type": "string" }
+      },
+      "additionalProperties": { "type": "string" }
     }
   },
   "additionalProperties": false

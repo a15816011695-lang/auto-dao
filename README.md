@@ -152,7 +152,50 @@ auto-dao/
 
 ---
 
-## 🔒 安全与隐私
+## �️ 故障排查
+
+### 学习会话初始化相关
+
+| 症状 | 原因 | 解决 |
+|------|------|------|
+| `validate_state.py` 报 `schema_version expected '2.2', got '2.0'` | 旧版会话（schema 2.0/2.1）需要迁移 | 在 `session_state.json` 补 `topic_name` / `learner_model` / `_file_paths` 并把版本改 `2.2`；或用 `python scripts/session/init_session.py` 新建后手动搬运内容 |
+| 新会话必需字段缺失 | 手动创建会话易漏 | 直接用 `python scripts/session/init_session.py <topic_id> <source_path>` 一键生成骨架并自动通过校验 |
+| `_file_paths` 与实际文件名不一致 | 历史遗留 `Sys.NN_` 前缀 | 重命名派生视图文件为纯名（`summary.md` 等），并更新 `_file_paths` |
+
+### 文档转换相关
+
+| 症状 | 原因 | 解决 |
+|------|------|------|
+| `MINERU_API_KEY` 未配置 | `settings/.env` 缺文件或值仍为 `TODO` | 编辑 `settings/.env`，填入从 https://mineru.net/apiManage/token 申请的 Key |
+| `解析超时（600秒）` | 大文档/网络抖动 | 按章节拆分；或重跑脚本，其内置指数退避重试 |
+| `文件大小 X MB 超过 MinerU 上限 200 MB` | 单文件超限 | 先用 PDF 工具拆页再转 |
+
+### 诊断批改相关
+
+| 症状 | 原因 | 解决 |
+|------|------|------|
+| 诊断后路由始终是 `compact`，即使用户过度自信 | 未传 `dominant_bias` 或 `confidences` | 调用 `grade_diagnostic_file(..., confidences=[1..5])`，系统会自动推断主导 bias |
+| `learner_model.concept_mastery` 未更新 | 诊断题未填 `concept_tag` | 按 `prereq-diagnostic-template.md` 的最新格式补齐 `concept_tag` 字段 |
+
+### 自检一键命令
+
+```bash
+# 校验某个会话目录的全部状态不变量
+python scripts/session/validate_state.py learning-history/<topic>_<timestamp>
+
+# 查看到期复习项
+python scripts/session/schedule_review.py learning-history/<topic>_<timestamp>
+
+# 构建跨材料语料索引（检测概念覆盖）
+python scripts/indexer/build_corpus_index.py
+
+# 全量测试
+python -m pytest tests/ -q
+```
+
+---
+
+## �🔒 安全与隐私
 
 - [安全策略 (SECURITY.md)](SECURITY.md) — 漏洞报告方式
 - [隐私说明 (PRIVACY.md)](PRIVACY.md) — 哪些数据会发送到外部服务

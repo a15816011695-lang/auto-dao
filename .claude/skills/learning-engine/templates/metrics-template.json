@@ -1,5 +1,25 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "session_id": "",
-  "events": []
+  "events": [],
+  "_allowed_event_types": [
+    "session_started",
+    "lesson_generated",
+    "lesson_completed",
+    "diagnostic_completed",
+    "diagnostic_recheck_completed",
+    "remediation_inserted",
+    "scaffold_triggered",
+    "review_triggered",
+    "review_resolved",
+    "counterfactual_toggled",
+    "bloom_target_adjusted",
+    "roadmap_updated",
+    "session_completed"
+  ],
+  "_event_schema_hint": {
+    "required": ["event", "timestamp"],
+    "common_optional": ["lesson", "concept_tag", "route", "mastery_pct", "scaffold_strategy"],
+    "notes": "每个事件至少包含 event 与 ISO 8601 timestamp；根据类型追加上下文字段。`concept_tag` 用于与 learner_model.concept_mastery 键对齐。"
+  }
 }

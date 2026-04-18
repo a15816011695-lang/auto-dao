@@ -6,5 +6,8 @@
   "scripts": {
     "convert": "python .claude/skills/everything-to-markdown/scripts/convert_to_markdown.py"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@drawio/mcp": "^1.2.5"
+  }
 }

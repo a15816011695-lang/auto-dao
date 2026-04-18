@@ -34,8 +34,10 @@ auto-dao/
 │       ├── roadmap_status.md    # Learning roadmap & milestones
 │       ├── report.md            # Learning report (generated on completion)
 │       └── lessons/
-│           ├── lesson_1.md      # Lesson content (file-driven)
-│           └── ...
+│           ├── 02.0_I2C 协议原理.md   # New: NN[.X]_描述.md
+│           ├── 02.1_I2C 协议代码.md   # Subsection lesson
+│           ├── 06_四大总线对比.md     # Single-page lesson
+│           └── _archive_legacy/      # Old lesson_N.md files (backward compat)
 ├── examples/learning-history/   # Example learning sessions (reference)
 └── tmp/                         # Temporary files
 ```
@@ -117,10 +119,14 @@ Each learning session creates a directory: `learning-history/{topic}_{YYYY-MM-DD
 - Milestones
 - Learning history
 
-**lessons/lesson_N.md** contains:
+**lessons/NN[.X]_描述.md** (or legacy `lesson_N.md`) contains:
+- Metadata (`concept_tags`, `concept_keywords`, prerequisites)
 - Learning objectives (Bloom's level)
 - Core explanation (with `> **资料原文**：` citations)
 - 2-4 practice exercises
+- Thinking module (L1: keyword index + knowledge chains, per B.1+B.4 template)
+- Reflection (meta-cognitive only)
+- Summary with keyword relationship graph (L2)
 - `**我的答案**：` sections for user answers
 
 ### Answer Checking Workflow
