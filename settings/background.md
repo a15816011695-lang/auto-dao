@@ -32,6 +32,16 @@
 
 ---
 
+## 源码参考（2026-04-18 启用）
+
+> 用于 `teaching_mode=B` 的场景闭环课程从真实工程抽取代码。
+> 详见 `docs/plans/2026-04-18-scenario-closure-feynman-design.md`。
+
+- source_code_root: E:/hangge-code/0.源码/04-stm32
+- source_material_md: E:/hangge-code/0.源码/04-stm32/md
+
+---
+
 ## 教学偏好（可选）
 
 > 以下字段均为可选，留空则使用系统默认值。调用时口头补充的偏好优先级最高。
